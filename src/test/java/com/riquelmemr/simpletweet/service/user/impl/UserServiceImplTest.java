@@ -1,5 +1,6 @@
 package com.riquelmemr.simpletweet.service.user.impl;
 
+import com.riquelmemr.simpletweet.builder.UserBuilder;
 import com.riquelmemr.simpletweet.dto.request.UpdateUserRequest;
 import com.riquelmemr.simpletweet.enums.RoleEnum;
 import com.riquelmemr.simpletweet.exceptions.EntityAlreadyExistsException;
@@ -54,17 +55,21 @@ class UserServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        user = new User();
-        user.setUsername("john");
-        user.setPassword("123456");
+        user = new UserBuilder()
+                .withPk(3L)
+                .withUsername("john")
+                .withPassword("123456")
+                .build();
 
-        requester = new User();
-        requester.setPk(1L);
-        requester.setUsername("requester");
+        requester = new UserBuilder()
+                .withPk(1L)
+                .withUsername("requester")
+                .build();
 
-        owner = new User();
-        owner.setPk(2L);
-        owner.setUsername("owner");
+        owner = new UserBuilder()
+                .withPk(2L)
+                .withUsername("owner")
+                .build();
 
         token = mock(JwtAuthenticationToken.class);
 

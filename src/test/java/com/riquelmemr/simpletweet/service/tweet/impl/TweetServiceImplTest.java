@@ -1,5 +1,6 @@
 package com.riquelmemr.simpletweet.service.tweet.impl;
 
+import com.riquelmemr.simpletweet.builder.TweetBuilder;
 import com.riquelmemr.simpletweet.dto.request.UpdateTweetRequest;
 import com.riquelmemr.simpletweet.enums.RoleEnum;
 import com.riquelmemr.simpletweet.exceptions.EntityNotFoundException;
@@ -54,7 +55,7 @@ public class TweetServiceImplTest {
     @Test
     void shouldCreateTweetSuccessfully() {
         // Arrange
-        Tweet tweet = getTweetMock(user);
+        Tweet tweet = new TweetBuilder().random().withAuthor(user).build();
 
         // Act
         tweetService.create(tweet);
@@ -67,7 +68,7 @@ public class TweetServiceImplTest {
     void shouldAllowOwnerToUpdateHimself() {
         // Arrange
         user.setRoles(Set.of(basicRole));
-        Tweet tweet = getTweetMock(user);
+        Tweet tweet = new TweetBuilder().random().withAuthor(user).build();
 
         UpdateTweetRequest request = new UpdateTweetRequest("Test content updated");
 
@@ -85,7 +86,7 @@ public class TweetServiceImplTest {
     void shouldAllowAdminToUpdate() {
         // Arrange
         requester.setRoles(Set.of(adminRole));
-        Tweet tweet = getTweetMock(user);
+        Tweet tweet = new TweetBuilder().random().withAuthor(user).build();
 
         UpdateTweetRequest request = new UpdateTweetRequest("Test content updated");
 
@@ -105,7 +106,7 @@ public class TweetServiceImplTest {
         requester.setRoles(Set.of(adminRole));
 
         UpdateTweetRequest request = new UpdateTweetRequest("Test content updated");
-        Tweet tweet = getTweetMock(user);
+        Tweet tweet = new TweetBuilder().random().withAuthor(user).build();
 
         when(tweetRepository.findById(1L)).thenReturn(Optional.of(tweet));
 
@@ -136,7 +137,7 @@ public class TweetServiceImplTest {
     void shouldDeleteTweetWhenUserHasPermission() {
         // Arrange
         user.setRoles(Set.of(basicRole));
-        Tweet tweet = getTweetMock(user);
+        Tweet tweet = new TweetBuilder().random().withAuthor(user).build();
         when(tweetRepository.findById(1L)).thenReturn(Optional.of(tweet));
 
         // Act
@@ -150,7 +151,7 @@ public class TweetServiceImplTest {
     void shouldThrowExceptionWhenUserHasNoPermissionToDelete() {
         // Arrange
         requester.setRoles(Set.of(basicRole));
-        Tweet tweet = getTweetMock(user);
+        Tweet tweet = new TweetBuilder().random().withAuthor(user).build();
 
         when(tweetRepository.findById(1L)).thenReturn(Optional.of(tweet));
 
@@ -162,7 +163,7 @@ public class TweetServiceImplTest {
     @Test
     void shouldFindTweetByIdWhenExists() {
         // Arrange
-        Tweet tweet = getTweetMock(user);
+        Tweet tweet = new TweetBuilder().random().withAuthor(user).build();
 
         when(tweetRepository.findById(1L)).thenReturn(Optional.of(tweet));
 
@@ -250,13 +251,5 @@ public class TweetServiceImplTest {
         // Assert
         assertTrue(result.isEmpty());
         verify(tweetRepository).findAll(any(Pageable.class));
-    }
-
-    private Tweet getTweetMock(User user) {
-        Tweet tweet = new Tweet();
-        tweet.setPk(1L);
-        tweet.setContent("Test content");
-        tweet.setAuthor(user);
-        return tweet;
     }
 }
