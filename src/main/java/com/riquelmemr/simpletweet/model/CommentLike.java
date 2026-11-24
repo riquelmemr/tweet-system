@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "tb_comment_like")
 public class CommentLike extends Item {
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "owner_id")
     private User owner;

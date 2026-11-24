@@ -3,32 +3,14 @@ package com.riquelmemr.simpletweet.facade;
 import com.riquelmemr.simpletweet.dto.request.CreateUserRequest;
 import com.riquelmemr.simpletweet.dto.request.UpdateUserRequest;
 import com.riquelmemr.simpletweet.model.User;
-import com.riquelmemr.simpletweet.mapper.UserMapper;
-import com.riquelmemr.simpletweet.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 
-@Component
-public class UserFacade {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserMapper userMapper;
+public interface UserFacade {
 
-    public User register(CreateUserRequest request) {
-        User user = userMapper.toModel(request);
-        userService.create(user);
-        return user;
-    }
+    User register(CreateUserRequest request);
 
-    public List<User> findAll() {
-        return userService.findAll();
-    }
+    List<User> findAll();
 
-    public User update(Long ownerId, UpdateUserRequest request, JwtAuthenticationToken token) {
-        return userService.update(ownerId, request, token);
-    }
+    User update(Long ownerId, UpdateUserRequest request, JwtAuthenticationToken token);
 }

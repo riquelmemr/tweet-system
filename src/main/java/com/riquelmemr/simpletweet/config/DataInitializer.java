@@ -1,39 +1,39 @@
 package com.riquelmemr.simpletweet.config;
 
+import com.riquelmemr.simpletweet.enums.RoleEnum;
 import com.riquelmemr.simpletweet.model.Role;
 import com.riquelmemr.simpletweet.model.User;
-import com.riquelmemr.simpletweet.enums.RoleEnum;
 import com.riquelmemr.simpletweet.repository.RoleRepository;
 import com.riquelmemr.simpletweet.repository.UserRepository;
 import com.riquelmemr.simpletweet.service.user.UserService;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Objects;
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
-
-import static com.riquelmemr.simpletweet.utils.ObjectUtils.isNotNull;
-
+@Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         Role adminRole = roleRepository.findByName(RoleEnum.ADMIN.name().toUpperCase());
         User adminUser = userService.findByUsername("admin");
 
-        if (isNotNull(adminUser)) return;
+        if (Objects.nonNull(adminUser)) {
+            return;
+        }
 
         User user = new User();
         user.setUsername("admin");
@@ -41,5 +41,7 @@ public class DataInitializer implements CommandLineRunner {
         user.setPassword(passwordEncoder.encode("nimda"));
         user.setRoles(Set.of(adminRole));
         userRepository.save(user);
+
+        log.info("Admin user [{}] created", user.getUsername());
     }
 }
