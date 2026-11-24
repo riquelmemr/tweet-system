@@ -2,10 +2,10 @@ package com.riquelmemr.simpletweet.builder;
 
 import com.riquelmemr.simpletweet.model.Role;
 import com.riquelmemr.simpletweet.model.User;
-
 import java.util.Set;
 
 public class UserBuilder {
+
     private final User user;
 
     public UserBuilder() {

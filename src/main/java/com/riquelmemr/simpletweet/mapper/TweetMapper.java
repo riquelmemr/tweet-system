@@ -7,15 +7,15 @@ import com.riquelmemr.simpletweet.dto.response.TweetDetailResponse;
 import com.riquelmemr.simpletweet.model.Like;
 import com.riquelmemr.simpletweet.model.Tweet;
 import com.riquelmemr.simpletweet.model.User;
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 @Component
 public class TweetMapper {
+
     public Tweet toModel(CreateTweetRequest createTweetRequest) {
         if (createTweetRequest == null) {
             return null;

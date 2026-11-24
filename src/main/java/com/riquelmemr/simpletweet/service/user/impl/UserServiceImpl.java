@@ -5,36 +5,32 @@ import com.riquelmemr.simpletweet.enums.RoleEnum;
 import com.riquelmemr.simpletweet.exceptions.EntityAlreadyExistsException;
 import com.riquelmemr.simpletweet.exceptions.EntityNotFoundException;
 import com.riquelmemr.simpletweet.exceptions.ResourceNotAllowedException;
-import com.riquelmemr.simpletweet.mapper.UserMapper;
 import com.riquelmemr.simpletweet.model.Role;
 import com.riquelmemr.simpletweet.model.User;
 import com.riquelmemr.simpletweet.repository.RoleRepository;
 import com.riquelmemr.simpletweet.repository.UserRepository;
 import com.riquelmemr.simpletweet.security.JwtUtils;
 import com.riquelmemr.simpletweet.service.user.UserService;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
-
-import static com.riquelmemr.simpletweet.utils.ObjectUtils.isNotNull;
-
+@Slf4j
 @Service
-public class UserServiceImpl implements UserService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtUtils jwtUtils;
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
     @Override
     @Transactional
@@ -42,13 +38,16 @@ public class UserServiceImpl implements UserService {
         User userAlreadyExists = findByUsername(user.getUsername());
         Role basicRole = roleRepository.findByName(RoleEnum.BASIC.name().toUpperCase());
 
-        if (isNotNull(userAlreadyExists)) {
+        if (Objects.nonNull(userAlreadyExists)) {
+            log.warn("User [{}] already exists", user.getUsername());
             throw new EntityAlreadyExistsException("User already exists by username.");
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Set.of(basicRole));
         userRepository.save(user);
+
+        log.info("User [{}] created with id [{}]", user.getUsername(), user.getPk());
     }
 
     @Override
@@ -64,11 +63,15 @@ public class UserServiceImpl implements UserService {
         boolean isOwner = owner.getPk().equals(requester.getPk());
 
         if (!isOwner && !isAdmin) {
+            log.warn("User [{}] is not allowed to update user [{}]", requester.getPk(), ownerId);
             throw new ResourceNotAllowedException("You do not have permission to update this user.");
         }
 
         updateUserData(request, owner);
         userRepository.save(owner);
+
+        log.info("User [{}] updated by user [{}]", ownerId, requester.getPk());
+
         return owner;
     }
 
@@ -96,9 +99,20 @@ public class UserServiceImpl implements UserService {
     }
 
     private void updateUserData(UpdateUserRequest request, User owner) {
-        if (isNotNull(request.name())) owner.setName(request.name());
-        if (isNotNull(request.username())) owner.setUsername(request.username());
-        if (isNotNull(request.email())) owner.setEmail(request.email());
-        if (isNotNull(request.bio())) owner.setBio(request.bio());
+        if (Objects.nonNull(request.name())) {
+            owner.setName(request.name());
+        }
+
+        if (Objects.nonNull(request.username())) {
+            owner.setUsername(request.username());
+        }
+
+        if (Objects.nonNull(request.email())) {
+            owner.setEmail(request.email());
+        }
+
+        if (Objects.nonNull(request.bio())) {
+            owner.setBio(request.bio());
+        }
     }
 }

@@ -5,16 +5,19 @@ import com.riquelmemr.simpletweet.model.CommentLike;
 import com.riquelmemr.simpletweet.model.User;
 import com.riquelmemr.simpletweet.repository.CommentLikeRepository;
 import com.riquelmemr.simpletweet.service.commentlike.CommentLikeService;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
-public class CommentLikeServiceImpl implements CommentLikeService {
-    @Autowired
-    private CommentLikeRepository commentLikeRepository;
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+class CommentLikeServiceImpl implements CommentLikeService {
+
+    private final CommentLikeRepository commentLikeRepository;
 
     @Override
     @Transactional
@@ -23,6 +26,9 @@ public class CommentLikeServiceImpl implements CommentLikeService {
 
         if (existingCommentLike.isPresent()) {
             commentLikeRepository.delete(existingCommentLike.get());
+
+            log.info("User [{}] removed like from comment [{}]", user.getPk(), comment.getPk());
+
             return;
         }
 
@@ -30,5 +36,7 @@ public class CommentLikeServiceImpl implements CommentLikeService {
         commentLike.setComment(comment);
         commentLike.setOwner(user);
         commentLikeRepository.save(commentLike);
+
+        log.info("User [{}] liked comment [{}]", user.getPk(), comment.getPk());
     }
 }

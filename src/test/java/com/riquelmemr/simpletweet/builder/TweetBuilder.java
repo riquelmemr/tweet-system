@@ -6,6 +6,7 @@ import com.riquelmemr.simpletweet.model.Tweet;
 import com.riquelmemr.simpletweet.model.User;
 
 public class TweetBuilder {
+
     private final Tweet tweet;
 
     public TweetBuilder() {

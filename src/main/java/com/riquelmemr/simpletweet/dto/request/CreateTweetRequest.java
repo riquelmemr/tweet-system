@@ -1,4 +1,8 @@
 package com.riquelmemr.simpletweet.dto.request;
 
-public record CreateTweetRequest(String content) {
+import jakarta.validation.constraints.NotBlank;
+
+public record CreateTweetRequest(
+        @NotBlank String content
+) {
 }
