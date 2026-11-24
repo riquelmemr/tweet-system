@@ -1,6 +1,7 @@
 package com.riquelmemr.simpletweet.enums;
 
 public enum RoleEnum {
+
     ADMIN(1),
     BASIC(2);
 

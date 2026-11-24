@@ -18,10 +18,13 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   CustomAuthenticationEntryPoint entryPoint,
-                                                   CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            CustomAuthenticationEntryPoint entryPoint,
+            CustomAccessDeniedHandler accessDeniedHandler
+    ) throws Exception {
         http.authorizeHttpRequests(
                 authorize -> authorize
                         .requestMatchers("/auth/token").permitAll()

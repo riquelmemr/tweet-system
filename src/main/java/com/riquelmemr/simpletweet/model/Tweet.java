@@ -1,13 +1,18 @@
 package com.riquelmemr.simpletweet.model;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "tb_tweet")
 public class Tweet extends Item {
+
     private String content;
 
     @ManyToOne(optional = false)
@@ -18,7 +23,7 @@ public class Tweet extends Item {
     private final Set<Like> likes = new HashSet<>();
 
     @OneToMany(mappedBy = "tweet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private final Set<Like> comments = new HashSet<>();
+    private final Set<Comment> comments = new HashSet<>();
 
     public String getContent() {
         return content;
@@ -40,7 +45,7 @@ public class Tweet extends Item {
         return likes;
     }
 
-    public Set<Like> getComments() {
+    public Set<Comment> getComments() {
         return comments;
     }
 }

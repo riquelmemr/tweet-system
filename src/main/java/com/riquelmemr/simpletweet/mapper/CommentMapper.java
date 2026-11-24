@@ -5,14 +5,14 @@ import com.riquelmemr.simpletweet.dto.response.CommentResponse;
 import com.riquelmemr.simpletweet.model.Comment;
 import com.riquelmemr.simpletweet.model.Tweet;
 import com.riquelmemr.simpletweet.model.User;
+import java.util.List;
+import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.Set;
-
 @Component
 public class CommentMapper {
+
     public Comment toModel(CreateCommentRequest request, User user, Tweet tweet) {
         Comment comment = new Comment();
         comment.setContent(request.content());
@@ -35,6 +35,7 @@ public class CommentMapper {
                 comment.getOwner().getUsername(),
                 comment.getOwner().getName(),
                 comment.getContent(),
+                comment.getLikes().size(),
                 toListCommentResponse(comment.getReplies())
         );
     }

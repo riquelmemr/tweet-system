@@ -2,47 +2,50 @@ package com.riquelmemr.simpletweet.service.auth.impl;
 
 import com.riquelmemr.simpletweet.dto.request.LoginRequest;
 import com.riquelmemr.simpletweet.dto.response.LoginResponse;
-import com.riquelmemr.simpletweet.model.User;
 import com.riquelmemr.simpletweet.mapper.UserMapper;
+import com.riquelmemr.simpletweet.model.User;
 import com.riquelmemr.simpletweet.security.JwtUtils;
 import com.riquelmemr.simpletweet.service.auth.AuthService;
 import com.riquelmemr.simpletweet.service.user.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Objects;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static com.riquelmemr.simpletweet.utils.ObjectUtils.isNull;
-
+@Slf4j
 @Service
-public class AuthServiceImpl implements AuthService {
-    private final static String BAD_CREDENTIALS_ERROR_MESSAGE = "Username or password is invalid.";
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private JwtEncoder jwtEncoder;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtUtils jwtUtils;
-    @Autowired
-    private UserMapper userMapper;
+    private static final String BAD_CREDENTIALS_ERROR_MESSAGE = "Username or password is invalid.";
+
+    private final UserService userService;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
+    private final UserMapper userMapper;
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
         User user = userService.findByUsername(loginRequest.username());
 
-        if (isNull(user)) {
+        if (Objects.isNull(user)) {
+            log.warn("Login failed: user [{}] not found", loginRequest.username());
             throw new BadCredentialsException(BAD_CREDENTIALS_ERROR_MESSAGE);
         }
 
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
+            log.warn("Login failed: invalid password for user [{}]", user.getPk());
             throw new BadCredentialsException(BAD_CREDENTIALS_ERROR_MESSAGE);
         }
 
         String token = jwtUtils.generateJwtToken(user);
+
+        log.info("User [{}] logged in", user.getPk());
+
         return userMapper.toLoginResponseDto(token, jwtUtils.getJwtExpiresIn());
     }
 }

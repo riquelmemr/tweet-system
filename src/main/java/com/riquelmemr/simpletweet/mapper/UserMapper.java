@@ -4,12 +4,12 @@ import com.riquelmemr.simpletweet.dto.request.CreateUserRequest;
 import com.riquelmemr.simpletweet.dto.response.LoginResponse;
 import com.riquelmemr.simpletweet.dto.response.UserResponse;
 import com.riquelmemr.simpletweet.model.User;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class UserMapper {
+
     public User toModel(CreateUserRequest request) {
         if (request == null) {
             return null;
