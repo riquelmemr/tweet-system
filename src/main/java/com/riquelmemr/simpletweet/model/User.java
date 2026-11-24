@@ -1,14 +1,22 @@
 package com.riquelmemr.simpletweet.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
-
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "tb_user")
 public class User extends Item {
+
     @Column(unique = true)
     private String username;
 

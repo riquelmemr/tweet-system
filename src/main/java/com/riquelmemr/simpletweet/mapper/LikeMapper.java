@@ -2,13 +2,13 @@ package com.riquelmemr.simpletweet.mapper;
 
 import com.riquelmemr.simpletweet.dto.response.LikeDetailResponse;
 import com.riquelmemr.simpletweet.model.Like;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class LikeMapper {
+
     public LikeDetailResponse toLikeDetailResponseDto(Like like) {
         return new LikeDetailResponse(like.getPk(), like.getOwner().getUsername(), like.getOwner().getName());
     }

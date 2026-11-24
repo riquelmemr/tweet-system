@@ -6,23 +6,22 @@ import com.riquelmemr.simpletweet.model.User;
 import com.riquelmemr.simpletweet.repository.LikeRepository;
 import com.riquelmemr.simpletweet.service.like.LikeService;
 import com.riquelmemr.simpletweet.service.tweet.TweetService;
-import com.riquelmemr.simpletweet.service.user.UserService;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
+@Slf4j
 @Service
-public class LikeServiceImpl implements LikeService {
-    @Autowired
-    private TweetService tweetService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private LikeRepository likeRepository;
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+class LikeServiceImpl implements LikeService {
+
+    private final TweetService tweetService;
+    private final LikeRepository likeRepository;
 
     @Override
     @Transactional
@@ -33,6 +32,9 @@ public class LikeServiceImpl implements LikeService {
 
         if (existingLike.isPresent()) {
             likeRepository.delete(existingLike.get());
+
+            log.info("User [{}] removed like from tweet [{}]", user.getPk(), tweetId);
+
             return;
         }
 
@@ -40,6 +42,8 @@ public class LikeServiceImpl implements LikeService {
         like.setOwner(user);
         like.setTweet(tweet);
         likeRepository.save(like);
+
+        log.info("User [{}] liked tweet [{}]", user.getPk(), tweetId);
     }
 
     @Override

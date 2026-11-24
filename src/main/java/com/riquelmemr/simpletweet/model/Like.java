@@ -1,10 +1,14 @@
 package com.riquelmemr.simpletweet.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_like")
 public class Like extends Item {
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "owner_id")
     private User owner;

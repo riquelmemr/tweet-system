@@ -4,13 +4,9 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 
-public class ObjectUtils {
-    public static boolean isNull(Object obj) {
-        return obj == null;
-    }
+public final class ObjectUtils {
 
-    public static boolean isNotNull(Object obj) {
-        return obj != null;
+    private ObjectUtils() {
     }
 
     public static boolean isEmpty(String str) {

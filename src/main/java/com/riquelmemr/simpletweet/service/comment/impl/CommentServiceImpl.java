@@ -5,19 +5,27 @@ import com.riquelmemr.simpletweet.model.Comment;
 import com.riquelmemr.simpletweet.model.Tweet;
 import com.riquelmemr.simpletweet.repository.CommentRepository;
 import com.riquelmemr.simpletweet.service.comment.CommentService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
-public class CommentServiceImpl implements CommentService {
-    @Autowired
-    private CommentRepository commentRepository;
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+class CommentServiceImpl implements CommentService {
+
+    private final CommentRepository commentRepository;
 
     @Override
+    @Transactional
     public void save(Comment comment) {
         commentRepository.save(comment);
+
+        log.info("Comment [{}] saved", comment.getPk());
     }
 
     @Override

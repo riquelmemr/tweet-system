@@ -4,10 +4,10 @@ import com.riquelmemr.simpletweet.model.Comment;
 import com.riquelmemr.simpletweet.model.CommentLike;
 import com.riquelmemr.simpletweet.model.Tweet;
 import com.riquelmemr.simpletweet.model.User;
-
 import java.util.Set;
 
 public class CommentBuilder {
+
     private final Comment comment;
 
     public CommentBuilder() {
@@ -53,4 +53,3 @@ public class CommentBuilder {
         return comment;
     }
 }
-

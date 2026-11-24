@@ -4,19 +4,21 @@ import com.riquelmemr.simpletweet.model.Comment;
 import com.riquelmemr.simpletweet.model.CommentLike;
 import com.riquelmemr.simpletweet.model.User;
 import com.riquelmemr.simpletweet.repository.CommentLikeRepository;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CommentLikeServiceImplTest {
+
     @Mock
     private CommentLikeRepository commentLikeRepository;
 

@@ -8,31 +8,41 @@ import com.riquelmemr.simpletweet.model.Tweet;
 import com.riquelmemr.simpletweet.model.User;
 import com.riquelmemr.simpletweet.repository.TweetRepository;
 import com.riquelmemr.simpletweet.service.tweet.TweetService;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
+@Slf4j
 @Service
-public class TweetServiceImpl implements TweetService {
-    @Autowired
-    private TweetRepository tweetRepository;
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+class TweetServiceImpl implements TweetService {
+
+    private final TweetRepository tweetRepository;
 
     @Override
+    @Transactional
     public void create(Tweet tweet) {
         tweetRepository.save(tweet);
+
+        log.info("Tweet [{}] created by user [{}]", tweet.getPk(), tweet.getAuthor().getPk());
     }
 
     @Override
+    @Transactional
     public Tweet update(Long id, UpdateTweetRequest request, User user) {
         Tweet tweet = findById(id);
         validatePermission(user, tweet, "update");
         updateTweetContent(request, tweet);
         tweetRepository.save(tweet);
+
+        log.info("Tweet [{}] updated by user [{}]", id, user.getPk());
+
         return tweet;
     }
 
@@ -42,6 +52,8 @@ public class TweetServiceImpl implements TweetService {
         Tweet tweet = findById(id);
         validatePermission(user, tweet, "delete");
         tweetRepository.deleteById(id);
+
+        log.info("Tweet [{}] deleted by user [{}]", id, user.getPk());
     }
 
     @Override
@@ -67,6 +79,7 @@ public class TweetServiceImpl implements TweetService {
         boolean isOwner = tweet.getAuthor().getPk().equals(user.getPk());
 
         if (!isAdmin && !isOwner) {
+            log.warn("User [{}] is not allowed to [{}] tweet [{}]", user.getPk(), action, tweet.getPk());
             throw new ResourceNotAllowedException("You do not have permission to " + action + " this tweet.");
         }
     }
